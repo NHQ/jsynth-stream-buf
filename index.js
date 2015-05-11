@@ -15,17 +15,21 @@ module.exports = function(master, size, _buffer){
   const sr = master.sampleRate
 
   var source = jsynth(master, function(t, s, i){
-    total++
+ 
     if(!source.playing){
-      if(total === start - 1) {
+      if(total === start) {
         source.resetIndex(offset)
         source.playing = true
       }
-      return 0
+      else {
+        total++
+        return 0
+      }
     }
     else if(total === end){
       source.onended()
       source.playing = false
+      total++
       return 0
     }
     else if(source._loop){
@@ -33,10 +37,12 @@ module.exports = function(master, size, _buffer){
         source.resetIndex(source._loopStart)
         s = source._loopStart
         t = s / sr
+        total++
       }
     }
+        total++
     source.currentTime = t
-    return tick(t, s, i)
+    return tick(t, s + offset, i)
   }, size)
 
   source.onended = function noop(){}
@@ -55,9 +61,10 @@ module.exports = function(master, size, _buffer){
   source.playing = false
   source._loop = false
   source._loopStart = 0
-  source._loopEnd = 0
+  source._loopEnd = buffer.length - 1
 
-  ['loop', 'loopStart', 'loopEnd'].forEach(function(e){
+  var props = ['loop', 'loopStart', 'loopEnd']
+  props.forEach(function(e){
     Object.defineProperty(source, e, {
       set: function(x){
         this['_' + e] = Math.floor(x * sr)
@@ -81,7 +88,7 @@ module.exports = function(master, size, _buffer){
   }
 
   source.stop = function(when){
-    end = Math.floor(when * sr)    
+    end = total + Math.floor(Math.max(0, (when || 0)) * sr)    
   }
 
   source.start = function(when, where, dur){
@@ -89,7 +96,8 @@ module.exports = function(master, size, _buffer){
     source.resetTime()
     start = Math.floor((when || 0) * sr)
     offset = Math.floor((where || 0) * sr)
-    end = dur ? Math.floor((where + dur) * sr) : buffer.length - 1
+    end = (!isNaN(dur)) ? Math.floor(dur * sr) : buffer.length 
+    end += start
     total = 0
   }
 
@@ -99,8 +107,11 @@ module.exports = function(master, size, _buffer){
   source.epochStartTime = Date.now()
 
   function tick(t, s, i){
-    return buffer.get(s)
+    if(s >= buffer.length) return 0
+    else return buffer.get(s)
   }
+
+  return source
 
 }
 

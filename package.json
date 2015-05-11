@@ -10,8 +10,8 @@
     "transform": "brfs"
   },
   "devDependencies": {
-    "base64-arraybuffer": "",
-    "brfs": ""
+    "base64-arraybuffer": "^0.1.2",
+    "brfs": "^1.4.0"
   },
   "author": "johnnyscript.us",
   "license": "MIT",
