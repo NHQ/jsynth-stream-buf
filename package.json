@@ -8,19 +8,13 @@
   },
   "browserify": {
     "transform": "brfs"
-  },  
+  },
   "devDependencies": {
     "base64-arraybuffer": "",
-    "brfs":""
+    "brfs": ""
   },
-  "repository": "",
-  "author": {
-    "name": "johnnyscript.us"
-  },
+  "author": "johnnyscript.us",
   "license": "MIT",
-  "readmeFilename": "README.md",
-  "readme": "# jsynth-file-sample\n\nThis module will turn your audio file / clip into a Web Audio source node. Use it to create samples.\n\nUse with [browserify](http://github.com/substack/browserify)v.2 and [brfs](http://github.com/substack/brfs)\n\n```\nnpm install jsynth-file-sample\n```\n\n## usage\n\nexample.js - use fs.readFileSync as supported by **brfs**. Use base64 encoding.\n\n```js\nvar fs = require('fs')\n,   fileBuff = require('./')\n,   context = new webkitAudioContext()\n;\n\nvar file = fs.readFileSync('./loop.wav', 'base64'); // <----  \n\nvar sample = fileBuff(context, file);\n\nsample.loop = true;\n\nsample.connect(context.destination)\n\nsample.start(0)\n```\n\nTo run example.js\n```js\nnpm install -g browserify -opa\ngit clone https://github.com/NHQ/jsynth-file-sample\ncd jsynth-file-sample\nopa -n -e example.js\n```\n\n",
-  "_id": "jsynth-file-sample@1.0.0",
   "dist": {
     "shasum": "06ff1a92fda678a9465da89de4821a5d4caa917c",
     "tarball": "http://registry.npmjs.org/jsynth-file-sample/-/jsynth-file-sample-1.0.0.tgz"
@@ -31,13 +25,16 @@
     "email": "mostmodernist@gmail.com"
   },
   "maintainers": [
-    {
-      "name": "johnnyscript",
-      "email": "mostmodernist@gmail.com"
-    }
+    "johnnyscript <mostmodernist@gmail.com>"
   ],
   "directories": {},
   "_shasum": "06ff1a92fda678a9465da89de4821a5d4caa917c",
   "_from": "jsynth-file-sample@",
-  "_resolved": "https://registry.npmjs.org/jsynth-file-sample/-/jsynth-file-sample-1.0.0.tgz"
+  "_resolved": "https://registry.npmjs.org/jsynth-file-sample/-/jsynth-file-sample-1.0.0.tgz",
+  "dependencies": {
+    "base64-arraybuffer": "^0.1.2",
+    "brfs": "^1.2.0",
+    "jbuffers": "^1.3.0",
+    "through2": "^0.6.5"
+  }
 }
