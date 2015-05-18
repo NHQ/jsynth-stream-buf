@@ -4943,6 +4943,12 @@ module.exports = function(master, _buffer, cb, size){
   const sr = master.sampleRate
 
   var source = jsynth(master, function(t, s, i){
+  
+    return play(t, s, i)
+
+  }, size)
+
+  function play(t, s, i){
  
    var _s = s
    
@@ -4967,7 +4973,6 @@ module.exports = function(master, _buffer, cb, size){
         var dif = source._loopEnd - np
         pbroffset = 0//-source._loopEnd - source._loopStart //0//-Math.floor(dif)
         s = Math.floor(source._loopStart / source._playbackRate)//xx - pbroffset // / source._playbackRate) 
-        console.log(s, pbroffset, self._loopStart)
        // t = s / sr 
         source.resetIndex(s)
       }
@@ -4981,9 +4986,8 @@ module.exports = function(master, _buffer, cb, size){
     }
     total++
     source.currentTime = t
-    return tick(t, s, i)
-  
-  }, size)
+    return tick(t, s, i) * source.gain
+  }
 
   source.onended = function noop(){}
 
@@ -5005,6 +5009,13 @@ module.exports = function(master, _buffer, cb, size){
   source._loopStart = 0
   source._loopEnd = buffer.length - 1
   source._playbackRate = 1
+  source.gain = 1
+  source.reverse = function(){
+    var buf = source.getBuffer()
+    Array.prototype.reverse.call(buf)
+    buffer = buffers(6)
+    buffer.push(buf)
+  }
   source.buffer = buffer.toBuffer()
   source.buffer.duration = buffer.length / sr
     Object.defineProperty(source, 'playbackRate', {
@@ -5012,7 +5023,7 @@ module.exports = function(master, _buffer, cb, size){
         x = Number(x) || 1
         var np = this.currentTime * x
         var dif = np - this.currentTime
-        pbroffset = 0//-Math.floor(dif * sr)
+        pbroffset = -Math.floor(dif * sr)
         this['_playbackRate'] = x
       },
       get: function(){
