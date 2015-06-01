@@ -50,7 +50,7 @@ module.exports = function(master, _buffer, cb, size){
       }
     }
     
-    else if(total === end){
+    else if(total >= end){
       source.onended()
       source.playing = false
       total++
@@ -87,6 +87,7 @@ module.exports = function(master, _buffer, cb, size){
     Array.prototype.reverse.call(buf)
     buffer = buffers(6)
     buffer.push(buf)
+    source.resetIndex((source.buffer.duration - source.currentTime) * sr)
   }
   source.buffer = buffer.toBuffer()
   source.buffer.duration = buffer.length / sr
@@ -116,7 +117,6 @@ module.exports = function(master, _buffer, cb, size){
   props.forEach(function(e){
     Object.defineProperty(source, e, {
       set: function(x){
-        console.log(e, x)
         this['_' + e] = Math.ceil(x * sr) + 3 
         this.updateLoop(e, x)
       },
@@ -145,9 +145,9 @@ module.exports = function(master, _buffer, cb, size){
     start = Math.floor((when || 0) * sr)
     offset = Math.floor((where || 0) * sr)
     end = (!isNaN(dur)) ? Math.floor(dur * sr) : buffer.length 
-        var np = where * source.playbackRate
-        var dif = np - where 
-        pbroffset = -Math.floor(dif * sr)
+    var np = where * source.playbackRate
+    var dif = np - where 
+    pbroffset = -Math.floor(dif * sr)
     source.resetIndex(offset)
     source.resetTime(where)
     end += start
