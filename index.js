@@ -44,6 +44,7 @@ module.exports = function(master, _buffer, cb, size){
         var np = source._loopStart * source._playbackRate
         var dif = source._loopEnd - np
         pbroffset = 0//-source._loopEnd - source._loopStart //0//-Math.floor(dif)
+        total = 0;
         s = Math.floor(source._loopStart / source._playbackRate)//xx - pbroffset // / source._playbackRate) 
        // t = s / sr 
         source.resetIndex(s)
